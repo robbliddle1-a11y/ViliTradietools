@@ -3,6 +3,7 @@
  * Rules: min 56px tap targets, 17px+ text, inputs at 18px (stops iOS zoom),
  * status never shown by colour alone (always a word or icon too).
  */
+import { formatAud } from "@/core/money";
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode, TextareaHTMLAttributes } from "react";
 
 export function cn(...c: Array<string | false | null | undefined>) {
@@ -129,13 +130,14 @@ export function TextArea({ className, ...props }: TextareaHTMLAttributes<HTMLTex
 
 /* ---------- Status ---------- */
 
-export type Status = "draft" | "sent" | "signed" | "declined";
+export type Status = "draft" | "sent" | "signed" | "declined" | "withdrawn";
 
 const statusMap: Record<Status, { label: string; cls: string; dot: string }> = {
   draft: { label: "Draft", cls: "bg-line/70 text-ink", dot: "bg-muted" },
   sent: { label: "Waiting on client", cls: "bg-pending-bg text-pending", dot: "bg-pending" },
   signed: { label: "Signed", cls: "bg-approved-bg text-approved", dot: "bg-approved" },
   declined: { label: "Declined", cls: "bg-declined-bg text-declined", dot: "bg-declined" },
+  withdrawn: { label: "Withdrawn", cls: "bg-line/70 text-muted", dot: "bg-muted" },
 };
 
 export function StatusPill({ status }: { status: Status }) {
@@ -179,10 +181,42 @@ export function Notice({
 
 /* ---------- Money ---------- */
 
-const aud = new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD" });
-
 /** Format cents as AUD. Money is always stored as integer cents. */
 export function Money({ cents, signed, className }: { cents: number; signed?: boolean; className?: string }) {
-  const sign = signed && cents > 0 ? "+" : cents < 0 ? "−" : "";
-  return <span className={cn("num whitespace-nowrap", className)}>{sign}{aud.format(Math.abs(cents) / 100)}</span>;
+  return <span className={cn("num whitespace-nowrap", className)}>{formatAud(cents, signed)}</span>;
+}
+
+/* ---------- Choice (big radio buttons, no JS needed) ---------- */
+
+export function Choice<T extends string>({
+  name,
+  options,
+  defaultValue,
+  onChange,
+}: {
+  name: string;
+  options: { value: T; label: string; hint?: string }[];
+  defaultValue?: T;
+  onChange?: (v: T) => void;
+}) {
+  return (
+    <div className={cn("grid gap-2", options.length === 2 && "grid-cols-2")}>
+      {options.map((o) => (
+        <label key={o.value} className="relative cursor-pointer">
+          <input
+            type="radio"
+            name={name}
+            value={o.value}
+            defaultChecked={defaultValue === o.value}
+            onChange={onChange ? () => onChange(o.value) : undefined}
+            className="peer sr-only"
+          />
+          <span className="flex min-h-tap flex-col justify-center rounded-md border-2 border-line-strong bg-card px-4 py-2 peer-checked:border-ink peer-checked:bg-ink peer-checked:text-on-ink peer-focus-visible:outline peer-focus-visible:outline-3 peer-focus-visible:outline-info">
+            <span className="font-semibold">{o.label}</span>
+            {o.hint && <span className="text-[14px] opacity-75 leading-snug">{o.hint}</span>}
+          </span>
+        </label>
+      ))}
+    </div>
+  );
 }

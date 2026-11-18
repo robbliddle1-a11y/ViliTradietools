@@ -1,6 +1,6 @@
 "use client";
 import { useActionState, useRef, useState } from "react";
-import { Button, Card, Field, Input, Notice } from "@/core/ui";
+import { Button, Card, Choice, Field, Input, Notice } from "@/core/ui";
 import { shrinkImage } from "@/core/ui/image";
 import { saveProfileAction, type ProfileState } from "./actions";
 import { formatAbn, isValidAbn } from "./validate";
@@ -14,6 +14,7 @@ type Initial = {
   email?: string | null;
   address?: string | null;
   logoUrl?: string | null;
+  gst_registered?: boolean;
 };
 
 export function ProfileForm({ initial, submitLabel }: { initial: Initial; submitLabel: string }) {
@@ -62,6 +63,19 @@ export function ProfileForm({ initial, submitLabel }: { initial: Initial; submit
         <Field label="QBCC licence number" hint="Shows on every variation and claim" error={e.qbcc_licence}>
           <Input name="qbcc_licence" defaultValue={initial.qbcc_licence ?? ""} inputMode="numeric" placeholder="e.g. 1234567" />
         </Field>
+
+        <div>
+          <span className="block text-[15px] font-semibold mb-1.5">Registered for GST?</span>
+          <Choice
+            name="gst_registered"
+            defaultValue={initial.gst_registered === false ? "no" : "yes"}
+            options={[
+              { value: "yes", label: "Yes" },
+              { value: "no", label: "No" },
+            ]}
+          />
+          <span className="block text-[15px] text-muted mt-1.5">Decides whether GST is added to your variations</span>
+        </div>
 
         <div>
           <span className="block text-[15px] font-semibold mb-1.5">Logo</span>

@@ -57,6 +57,7 @@ export async function saveProfileAction(_: ProfileState, form: FormData): Promis
     phone,
     email,
     address: s("address") || null,
+    gst_registered: s("gst_registered") !== "no",
     logo_key,
   });
 

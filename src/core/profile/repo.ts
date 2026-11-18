@@ -15,9 +15,10 @@ export type Business = {
   email: string | null;
   address: string | null;
   logo_key: string | null;
+  gst_registered: boolean;
 };
 
-const COLS = `id, owner_id, name, abn, qbcc_licence, contact_name, phone, email, address, logo_key`;
+const COLS = `id, owner_id, name, abn, qbcc_licence, contact_name, phone, email, address, logo_key, gst_registered`;
 
 export const getBusinessForUser = cache(async (userId: string) =>
   one<Business>(`select ${COLS} from businesses where owner_id = $1`, [userId]),
@@ -35,15 +36,15 @@ export type BusinessInput = Omit<Business, "id" | "owner_id" | "logo_key"> & { l
 
 export async function saveBusiness(ownerId: string, v: BusinessInput): Promise<Business> {
   const row = await one<Business>(
-    `insert into businesses (owner_id, name, abn, qbcc_licence, contact_name, phone, email, address, logo_key)
-     values ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+    `insert into businesses (owner_id, name, abn, qbcc_licence, contact_name, phone, email, address, logo_key, gst_registered)
+     values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
      on conflict (owner_id) do update set
        name = excluded.name, abn = excluded.abn, qbcc_licence = excluded.qbcc_licence,
        contact_name = excluded.contact_name, phone = excluded.phone, email = excluded.email,
-       address = excluded.address, logo_key = coalesce(excluded.logo_key, businesses.logo_key),
+       address = excluded.address, gst_registered = excluded.gst_registered, logo_key = coalesce(excluded.logo_key, businesses.logo_key),
        updated_at = now()
      returning ${COLS}`,
-    [ownerId, v.name, v.abn, v.qbcc_licence, v.contact_name, v.phone, v.email, v.address, v.logo_key ?? null],
+    [ownerId, v.name, v.abn, v.qbcc_licence, v.contact_name, v.phone, v.email, v.address, v.logo_key ?? null, v.gst_registered],
   );
   return row!;
 }
