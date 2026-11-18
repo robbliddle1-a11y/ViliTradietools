@@ -48,6 +48,17 @@ const buttonStyles: Record<ButtonVariant, string> = {
   danger: "bg-declined text-white active:opacity-90",
 };
 
+/** Button look for links (`<Link className={buttonClass(...)}>`) — never nest a button in a link. */
+export function buttonClass(variant: ButtonVariant = "primary", size: "lg" | "md" = "lg", block?: boolean, className?: string) {
+  return cn(
+    "inline-flex items-center justify-center gap-2 rounded-md font-semibold select-none transition-[background,transform] active:scale-[0.98] disabled:opacity-40 disabled:active:scale-100",
+    size === "lg" ? "min-h-tap px-6 text-[18px]" : "min-h-tap-sm px-4 text-[16px]",
+    block && "w-full",
+    buttonStyles[variant],
+    className,
+  );
+}
+
 export function Button({
   variant = "primary",
   size = "lg",
@@ -64,13 +75,7 @@ export function Button({
 }) {
   return (
     <button
-      className={cn(
-        "inline-flex items-center justify-center gap-2 rounded-md font-semibold select-none transition-[background,transform] active:scale-[0.98] disabled:opacity-40 disabled:active:scale-100",
-        size === "lg" ? "min-h-tap px-6 text-[18px]" : "min-h-tap-sm px-4 text-[16px]",
-        block && "w-full",
-        buttonStyles[variant],
-        className,
-      )}
+      className={buttonClass(variant, size, block, className)}
       {...props}
     >
       {icon}

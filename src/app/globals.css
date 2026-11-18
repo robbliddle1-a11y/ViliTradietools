@@ -1,2 +1,37 @@
 @import "tailwindcss";
 @import "../core/ui/tokens.css";
+
+/* Tailwind theme mapped onto the Level tokens (values live in core/ui/tokens.css). */
+@theme inline {
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-bubble: var(--bubble);
+  --color-bubble-deep: var(--bubble-deep);
+  --color-paper: var(--paper);
+  --color-card: var(--card);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-on-ink: var(--on-ink);
+  --color-approved: var(--approved);
+  --color-approved-bg: var(--approved-bg);
+  --color-pending: var(--pending);
+  --color-pending-bg: var(--pending-bg);
+  --color-declined: var(--declined);
+  --color-declined-bg: var(--declined-bg);
+  --color-info: var(--info);
+  --color-info-bg: var(--info-bg);
+
+  --font-display: "Archivo Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius-lg);
+
+  --spacing-tap: var(--tap);
+  --spacing-tap-sm: var(--tap-sm);
+
+  --shadow-card: var(--shadow-card);
+}
